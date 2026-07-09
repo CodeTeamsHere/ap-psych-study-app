@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Practice — Unit 3 · AP Psychology</title>
+  <script>
+    (function () { try { var t = localStorage.getItem('apsych:theme'); if (!t) { t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; } document.documentElement.setAttribute('data-theme', t); document.documentElement.style.colorScheme = t; } catch (e) {} })();
+  </script>
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body data-root="../" data-unit="3">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" aria-label="Course navigation"></aside>
+    <div class="drawer-scrim" aria-hidden="true"></div>
+    <div class="main">
+      <header class="topbar">
+        <button class="hamburger" aria-label="Open navigation menu" aria-expanded="false">☰</button>
+        <div class="crumb"><a href="../index.html">Home</a> / <b id="crumb-unit">Practice</b></div>
+        <div class="topbar-spacer"></div>
+        <div class="stat-strip" id="stat-strip"></div>
+        <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode">🌙</button>
+      </header>
+      <main class="content" id="main">
+        <div class="page-head" id="page-head"></div>
+
+        <div id="setup">
+          <div class="quiz-toolbar" role="group" aria-label="Build your practice set">
+            <div class="field"><label for="f-topic">Topic</label>
+              <select id="f-topic"><option value="all">All topics</option></select></div>
+            <div class="field"><label for="f-diff">Difficulty</label>
+              <select id="f-diff"><option value="all">All</option><option>Easy</option><option>Moderate</option><option>Difficult</option></select></div>
+            <div class="field"><label for="f-prac">Practice</label>
+              <select id="f-prac"><option value="all">All</option><option value="1">1 · Concept Application</option><option value="2">2 · Research Methods</option><option value="3">3 · Data Interpretation</option></select></div>
+            <div class="field"><label for="f-status">Status</label>
+              <select id="f-status"><option value="all">All</option><option value="unseen">Unseen</option><option value="missed">Previously missed</option><option value="correct">Previously correct</option></select></div>
+            <label class="elim-toggle"><input type="checkbox" id="f-shuffle" checked> Shuffle</label>
+            <span class="qcount" id="match-count"></span>
+          </div>
+          <div class="flex gap-3 wrap mb-4">
+            <button class="btn btn-primary" id="start-btn">Start practice →</button>
+            <button class="btn btn-outline" id="missed-btn">🔁 Review my missed questions</button>
+          </div>
+          <div class="panel" id="topic-overview"></div>
+        </div>
+
+        <div id="quiz-root" class="hidden"></div>
+        <div class="mt-5 hidden" id="back-wrap"><button class="btn btn-ghost" id="back-btn">← Change filters</button></div>
+      </main>
+      <footer data-footer></footer>
+    </div>
+  </div>
+
+  <script src="../data/course.js"></script>
+  <script src="../data/questions/unit-3.js"></script>
+  <script src="../js/progress.js"></script>
+  <script src="../js/gamification.js"></script>
+  <script src="../js/quiz.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/export.js"></script>
+  <script>
+    (function () {
+      var N = Number(document.body.dataset.unit);
+      var u = APSYCH.unitByNumber(N);
+      document.getElementById('crumb-unit').textContent = 'Practice · Unit ' + N;
+      document.title = 'Practice — Unit ' + N + ' · AP Psychology';
+      Shell.init({ active: { page: 'practice', unit: N } });
+
+      document.getElementById('page-head').innerHTML =
+        '<div class="eyebrow">Practice · Unit ' + N + '</div><h1>' + u.title + '</h1>' +
+        '<p class="lede">Untimed practice with instant, per-question feedback. Pick a choice, use the eye icon to eliminate answers, then submit to see why each option is right or wrong.</p>';
+
+      // populate topic filter
+      var topicSel = document.getElementById('f-topic');
+      u.topics.forEach(function (t) {
+        var o = document.createElement('option'); o.value = t.code; o.textContent = t.code + ' ' + t.title; topicSel.appendChild(o);
+      });
+      // preselect from ?topic=
+      var params = new URLSearchParams(location.search);
+      if (params.get('topic')) topicSel.value = params.get('topic');
+
+      var els = {
+        topic: topicSel, diff: document.getElementById('f-diff'), prac: document.getElementById('f-prac'),
+        status: document.getElementById('f-status'), shuffle: document.getElementById('f-shuffle'),
+        count: document.getElementById('match-count')
+      };
+      function currentFilter() {
+        return { topic: els.topic.value, difficulty: els.diff.value, practice: els.prac.value, status: els.status.value };
+      }
+      function matches() { return Quiz.filter(Quiz.unitQuestions(N), currentFilter()); }
+      function updateCount() {
+        var n = matches().length;
+        els.count.textContent = n + ' question' + (n === 1 ? '' : 's') + ' match';
+        document.getElementById('start-btn').disabled = n === 0;
+      }
+      [els.topic, els.diff, els.prac, els.status].forEach(function (e) { e.addEventListener('change', updateCount); });
+
+      function renderOverview() {
+        var host = document.getElementById('topic-overview');
+        var P = window.Progress;
+        var rows = u.topics.map(function (t) {
+          var qs = Quiz.topicQuestions(t.code);
+          var acc = P.topicAccuracy(t.code);
+          var lvl = P.topicLevel(t.code);
+          return '<div class="spread" style="padding:.5rem 0;border-bottom:1px solid var(--border);">' +
+            '<div class="flex items-center gap-2"><span class="mastery-dot ' + P.levelClass(lvl) + '"></span>' +
+            '<b>' + t.code + '</b> ' + t.title + '</div>' +
+            '<div class="flex items-center gap-3"><span class="muted small">' + qs.length + ' Qs</span>' +
+            '<span class="chip acc">' + (acc == null ? 'New' : acc + '%') + '</span>' +
+            '<button class="btn btn-sm btn-outline" data-topic="' + t.code + '">Practice</button></div></div>';
+        }).join('');
+        host.innerHTML = '<strong>Topics in this unit</strong>' + rows;
+        host.querySelectorAll('[data-topic]').forEach(function (b) {
+          b.addEventListener('click', function () { els.topic.value = b.dataset.topic; start(); });
+        });
+      }
+
+      var session = null;
+      function start() {
+        var qs = matches();
+        if (!qs.length) return;
+        document.getElementById('setup').classList.add('hidden');
+        var root = document.getElementById('quiz-root'); root.classList.remove('hidden');
+        document.getElementById('back-wrap').classList.remove('hidden');
+        session = new Quiz.PracticeSession(root, qs, { shuffle: els.shuffle.checked });
+        window.scrollTo({ top: 0 });
+      }
+      function reset() {
+        if (session && session.destroy) session.destroy();
+        document.getElementById('quiz-root').classList.add('hidden');
+        document.getElementById('quiz-root').innerHTML = '';
+        document.getElementById('back-wrap').classList.add('hidden');
+        document.getElementById('setup').classList.remove('hidden');
+        renderOverview(); updateCount();
+      }
+
+      document.getElementById('start-btn').addEventListener('click', start);
+      document.getElementById('back-btn').addEventListener('click', reset);
+      document.getElementById('missed-btn').addEventListener('click', function () {
+        var missedIds = window.Progress.missedQuestionIds();
+        var qs = Quiz.unitQuestions(N).filter(function (q) { return missedIds.indexOf(q.id) !== -1; });
+        if (!qs.length) { Gamification.toast('No missed questions in this unit — nice!'); return; }
+        document.getElementById('setup').classList.add('hidden');
+        var root = document.getElementById('quiz-root'); root.classList.remove('hidden');
+        document.getElementById('back-wrap').classList.remove('hidden');
+        session = new Quiz.PracticeSession(root, qs, { shuffle: true });
+        window.scrollTo({ top: 0 });
+      });
+
+      renderOverview();
+      updateCount();
+      window.addEventListener('apsych:progress-updated', function () { if (!document.getElementById('setup').classList.contains('hidden')) renderOverview(); });
+    })();
+  </script>
+</body>
+</html>

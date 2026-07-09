@@ -1,0 +1,134 @@
+/*
+ * themes.css — Color tokens as CSS custom properties.
+ * Light is the default on :root. Dark overrides apply when <html data-theme="dark">.
+ * theme.js sets data-theme from prefers-color-scheme, then a manual toggle persisted in localStorage.
+ * All colors meet WCAG AA: >=4.5:1 for body text, >=3:1 for large text / meaningful UI.
+ */
+
+:root {
+  /* Brand — an original green (not any platform's actual brand value) */
+  --primary:        #12805c;
+  --primary-strong: #0c6347;
+  --primary-soft:   #e3f3ec;
+  --primary-contrast: #ffffff;
+  --on-primary:     #ffffff;
+
+  /* Surfaces & structure */
+  --bg:             #f4f6f8;   /* app background */
+  --surface:        #ffffff;   /* cards, panels */
+  --surface-2:      #f7f9fb;   /* subtle raised / striped rows */
+  --surface-3:      #eef1f5;   /* hover fills */
+  --border:         #dde2e8;
+  --border-strong:  #c4ccd6;
+  --shadow:         0 1px 2px rgba(16, 24, 40, 0.05), 0 4px 16px rgba(16, 24, 40, 0.06);
+  --shadow-lg:      0 8px 32px rgba(16, 24, 40, 0.14);
+
+  /* Text */
+  --text:           #1a1d21;   /* high emphasis */
+  --text-2:         #4a525c;   /* medium emphasis */
+  --muted:          #6b7581;   /* low emphasis / captions */
+  --text-on-fill:   #ffffff;
+
+  /* Semantic feedback */
+  --correct:        #1a8f52;
+  --correct-bg:     #e6f6ec;
+  --correct-border: #9bd7b3;
+  --incorrect:      #c0323c;
+  --incorrect-bg:   #fbe9ea;
+  --incorrect-border:#eab0b4;
+  --selected:       #12805c;
+  --selected-bg:    #e3f3ec;
+  --warn:           #b26a00;
+  --warn-bg:        #fdf1dd;
+  --info:           #1d5fb0;
+  --info-bg:        #e6eefb;
+
+  /* Mastery levels (paired always with text + icon, never color alone) */
+  --m-new:          #9aa4b0;
+  --m-practiced:    #6f8fb0;
+  --m-familiar:     #2f8fd0;
+  --m-proficient:   #2aa36a;
+  --m-mastered:     #12805c;
+
+  /* Difficulty chips */
+  --diff-easy:      #1a8f52;
+  --diff-moderate:  #b26a00;
+  --diff-difficult: #c0323c;
+
+  /* Focus ring — >=3:1 against surfaces in both themes */
+  --focus:          #0a66c2;
+  --focus-ring:     0 0 0 3px rgba(10, 102, 194, 0.45);
+
+  /* Accent for XP / streak */
+  --xp:             #b26a00;
+  --streak:         #d1642a;
+
+  /* Charts */
+  --chart-1: #12805c;
+  --chart-2: #2f8fd0;
+  --chart-3: #b26a00;
+  --chart-grid: #dde2e8;
+}
+
+html[data-theme="dark"] {
+  --primary:        #35b98a;   /* desaturated ~75% of light-mode saturation */
+  --primary-strong: #46c99a;
+  --primary-soft:   #17342a;
+  --primary-contrast: #06130d;
+  --on-primary:     #06130d;
+
+  --bg:             #0f0f10;
+  --surface:        #1a1a1c;   /* elevated over #121212 base for elevation shading */
+  --surface-2:      #202023;
+  --surface-3:      #2a2a2e;
+  --border:         #34343a;
+  --border-strong:  #45454d;
+  --shadow:         0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.45);
+  --shadow-lg:      0 8px 32px rgba(0, 0, 0, 0.6);
+
+  --text:           #e0e0e0;   /* dimmed off-white, not pure #fff */
+  --text-2:         #b5bac1;
+  --muted:          #8b929b;
+  --text-on-fill:   #06130d;
+
+  --correct:        #4cc281;
+  --correct-bg:     #12301f;
+  --correct-border: #2f6d48;
+  --incorrect:      #ef6b73;
+  --incorrect-bg:   #351416;
+  --incorrect-border:#7a3237;
+  --selected:       #35b98a;
+  --selected-bg:    #142f24;
+  --warn:           #e0a94a;
+  --warn-bg:        #33260e;
+  --info:           #6ba6ef;
+  --info-bg:        #12233d;
+
+  --m-new:          #767e8a;
+  --m-practiced:    #7d97b4;
+  --m-familiar:     #4fa6de;
+  --m-proficient:   #4cc281;
+  --m-mastered:     #35b98a;
+
+  --diff-easy:      #4cc281;
+  --diff-moderate:  #e0a94a;
+  --diff-difficult: #ef6b73;
+
+  --focus:          #6ba6ef;
+  --focus-ring:     0 0 0 3px rgba(107, 166, 239, 0.5);
+
+  --xp:             #e0a94a;
+  --streak:         #ef8a4f;
+
+  --chart-1: #35b98a;
+  --chart-2: #6ba6ef;
+  --chart-3: #e0a94a;
+  --chart-grid: #34343a;
+}
+
+/* Respect the OS preference before any manual override loads */
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]):not([data-theme="dark"]) {
+    color-scheme: dark;
+  }
+}

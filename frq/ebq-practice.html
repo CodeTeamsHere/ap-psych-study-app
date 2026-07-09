@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EBQ Practice · AP Psychology</title>
+  <script>
+    (function () { try { var t = localStorage.getItem('apsych:theme'); if (!t) { t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; } document.documentElement.setAttribute('data-theme', t); document.documentElement.style.colorScheme = t; } catch (e) {} })();
+  </script>
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body data-root="../">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" aria-label="Course navigation"></aside>
+    <div class="drawer-scrim" aria-hidden="true"></div>
+    <div class="main">
+      <header class="topbar">
+        <button class="hamburger" aria-label="Open navigation menu" aria-expanded="false">☰</button>
+        <div class="crumb"><a href="../index.html">Home</a> / <b>EBQ Practice</b></div>
+        <div class="topbar-spacer"></div>
+        <div class="stat-strip" id="stat-strip"></div>
+        <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode">🌙</button>
+      </header>
+      <main class="content" id="main">
+        <div class="page-head"><div class="eyebrow">Free response · Question 2</div><h1>Evidence-Based Question (EBQ)</h1>
+          <p class="lede">You'll read three summarized peer-reviewed sources on one topic and answer three parts (A–C) for 7 points in ~45 minutes. Two original, exam-style sets are below.</p>
+        </div>
+        <div class="callout info reading" style="max-width:none;">
+          <div class="c-title"><span aria-hidden="true">🧭</span> How to approach it</div>
+          <ul class="mb-0">
+            <li><b>A</b> — state a clear, defensible <em>claim</em> that answers the question (1 pt).</li>
+            <li><b>B</b> — cite specific evidence from <em>one</em> source (1 pt) and explain/apply a psychological concept to it (2 pts).</li>
+            <li><b>C</b> — cite <em>different</em> evidence from a <em>different</em> source (1 pt) and apply a <em>different</em> psychological concept (2 pts).</li>
+            <li>Cite as "(Source A)" or "According to Source B…". The applied concept must be one explicitly in the AP Psychology CED.</li>
+          </ul>
+        </div>
+        <div id="frq-list" class="stack"></div>
+      </main>
+      <footer data-footer></footer>
+    </div>
+  </div>
+
+  <script src="../data/course.js"></script>
+  <script src="../data/frq.js"></script>
+  <script src="../js/progress.js"></script>
+  <script src="../js/gamification.js"></script>
+  <script src="../js/quiz.js"></script>
+  <script src="../js/notes.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/export.js"></script>
+  <script>
+    (function () {
+      Shell.init({ active: { page: 'ebq' } });
+      var host = document.getElementById('frq-list');
+      (APSYCH.frq.ebq || []).forEach(function (frq, i) {
+        var card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = '<div class="eyebrow">Set ' + (i + 1) + '</div>' + APSYCH.Notes.renderFRQ(frq);
+        host.appendChild(card);
+      });
+      APSYCH.Notes.restoreFRQ();
+    })();
+  </script>
+</body>
+</html>

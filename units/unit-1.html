@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Unit 1 — Biological Bases of Behavior · AP Psychology</title>
+  <script>
+    (function () { try { var t = localStorage.getItem('apsych:theme'); if (!t) { t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; } document.documentElement.setAttribute('data-theme', t); document.documentElement.style.colorScheme = t; } catch (e) {} })();
+  </script>
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body data-root="../" data-unit="1">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" aria-label="Course navigation"></aside>
+    <div class="drawer-scrim" aria-hidden="true"></div>
+    <div class="main">
+      <header class="topbar">
+        <button class="hamburger" aria-label="Open navigation menu" aria-expanded="false">☰</button>
+        <div class="crumb"><a href="../index.html">Home</a> / <b id="crumb-unit">Unit</b></div>
+        <div class="topbar-spacer"></div>
+        <div class="stat-strip" id="stat-strip"></div>
+        <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode">🌙</button>
+      </header>
+      <main class="content" id="main"><div id="unit-root"></div></main>
+      <footer data-footer></footer>
+    </div>
+  </div>
+
+  <script src="../data/course.js"></script>
+  <script src="../data/notes/unit-1.js"></script>
+  <script src="../js/progress.js"></script>
+  <script src="../js/gamification.js"></script>
+  <script src="../js/notes.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/export.js"></script>
+  <script>
+    (function () {
+      var N = Number(document.body.dataset.unit);
+      var u = APSYCH.unitByNumber(N);
+      document.getElementById('crumb-unit').textContent = 'Unit ' + N + ': ' + u.title;
+      document.title = 'Unit ' + N + ' — ' + u.title + ' · AP Psychology';
+      var hashTopic = decodeURIComponent((location.hash || '').replace('#', '')) || null;
+      Shell.init({ active: { page: 'unit', unit: N, topic: hashTopic } });
+      APSYCH.Notes.renderUnit('#unit-root', N);
+    })();
+  </script>
+</body>
+</html>

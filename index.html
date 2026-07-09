@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AP Psychology Self-Study Studio</title>
+  <meta name="description" content="A free, static study site for AP Psychology (current 5-unit CED): notes, original practice questions, mastery tracking, and full exam simulations.">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('apsych:theme');
+        if (!t) { t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; }
+        document.documentElement.setAttribute('data-theme', t);
+        document.documentElement.style.colorScheme = t;
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-root="./">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" aria-label="Course navigation"></aside>
+    <div class="drawer-scrim" aria-hidden="true"></div>
+    <div class="main">
+      <header class="topbar">
+        <button class="hamburger" aria-label="Open navigation menu" aria-expanded="false">☰</button>
+        <div class="crumb"><b>Dashboard</b></div>
+        <div class="topbar-spacer"></div>
+        <div class="stat-strip" id="stat-strip" aria-label="Streak and XP"></div>
+        <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode">🌙</button>
+      </header>
+
+      <main class="content" id="main">
+        <!-- Hero -->
+        <section class="hero">
+          <div class="hero-main">
+            <div>
+              <h1>Summer self-study, done right.</h1>
+              <p class="lede">Everything you need for the current, 5-unit AP&reg; Psychology course — original notes, applied practice questions with full explanations, mastery tracking, and timed exam simulations. 100% in your browser.</p>
+            </div>
+            <div class="flex gap-3 wrap">
+              <button class="btn" id="continue-btn">▶ Continue where you left off</button>
+              <a class="btn" href="how-to-study.html">How to study →</a>
+            </div>
+          </div>
+          <aside class="hero-aside">
+            <div class="stat-tile">
+              <div class="countdown"><b id="days-left">—</b><span class="lbl">days to the exam</span></div>
+              <div class="muted small mt-4" id="exam-date"></div>
+            </div>
+            <div class="stat-row">
+              <div class="stat-tile"><div class="num" id="stat-answered">0</div><div class="lbl">Questions answered</div></div>
+              <div class="stat-tile"><div class="num" id="stat-accuracy">—</div><div class="lbl">Overall accuracy</div></div>
+            </div>
+          </aside>
+        </section>
+
+        <!-- Course mastery + mini grid -->
+        <section class="card mb-4">
+          <div class="spread wrap gap-4">
+            <div class="flex items-center gap-4">
+              <div id="course-ring"></div>
+              <div>
+                <h2 style="margin-bottom:.25rem;">Course mastery</h2>
+                <p class="muted mb-0 small">Share of all 35 topics at <b>Proficient</b> or above, based on your rolling accuracy.</p>
+              </div>
+            </div>
+            <a class="btn btn-outline" href="progress.html">Full progress &amp; mastery →</a>
+          </div>
+          <div class="mt-5" id="mini-grid" aria-label="Topic mastery heatmap"></div>
+        </section>
+
+        <!-- Unit cards -->
+        <section>
+          <div class="page-head" style="margin-bottom:1rem;"><h2 style="margin:0;">The five units</h2><p class="muted mb-0 small">Each unit is weighted 15–25% of the multiple-choice section.</p></div>
+          <div class="grid grid-cards" id="unit-cards"></div>
+        </section>
+
+        <!-- Quick links -->
+        <section class="mt-6">
+          <div class="grid grid-cards">
+            <a class="unit-card" href="exam-overview.html"><div class="uc-head"><div class="uc-num">📋</div><div><div class="uc-title">Exam Overview</div><div class="uc-blurb">Format, the 4 science practices, AAQ &amp; EBQ, scoring, and a study plan.</div></div></div></a>
+            <a class="unit-card" href="frq/aaq-practice.html"><div class="uc-head"><div class="uc-num">📝</div><div><div class="uc-title">AAQ &amp; EBQ Practice</div><div class="uc-blurb">Two full Article-Analysis and two Evidence-Based sets with rubrics and model answers.</div></div></div></a>
+            <a class="unit-card" href="how-to-study.html"><div class="uc-head"><div class="uc-num">🧭</div><div><div class="uc-title">How to Study</div><div class="uc-blurb">Techniques, mnemonics, high-yield units, and the traps that cost points.</div></div></div></a>
+          </div>
+        </section>
+      </main>
+      <footer data-footer></footer>
+    </div>
+  </div>
+
+  <script src="data/course.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/gamification.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/export.js"></script>
+  <script>
+    (function () {
+      Shell.init({ active: { page: 'home' } });
+      var P = window.Progress;
+
+      // countdown (handles a stated date that has already passed)
+      var d = Shell.daysUntilExam();
+      var daysEl = document.getElementById('days-left');
+      var noteEl = document.getElementById('exam-date');
+      if (d != null && d > 0) {
+        daysEl.textContent = d;
+        noteEl.textContent = 'Exam: ' + APSYCH.course.examDateLabel + ' (confirm on College Board)';
+      } else {
+        daysEl.textContent = '—';
+        daysEl.style.fontSize = '1.5rem';
+        noteEl.innerHTML = 'Stated exam date (' + APSYCH.course.examDateLabel + ') has passed — <b>confirm next year\'s date</b> on College Board, as dates are set annually.';
+      }
+
+      function renderStats() {
+        document.getElementById('stat-answered').textContent = P.totalAnswered();
+        var ans = P.totalAnswered(), cor = P.totalCorrect();
+        document.getElementById('stat-accuracy').textContent = ans ? Math.round(cor / ans * 100) + '%' : '—';
+        document.getElementById('course-ring').innerHTML = Shell.ring(P.courseMasteryPct(), { size: 104, stroke: 11, sub: 'mastered', fs: '1.5rem', aria: P.courseMasteryPct() + ' percent of topics mastered' });
+        Shell.renderMasteryGrid('#mini-grid');
+        renderUnitCards();
+      }
+
+      function renderUnitCards() {
+        var host = document.getElementById('unit-cards');
+        host.innerHTML = '';
+        APSYCH.course.units.forEach(function (u) {
+          var acc = P.unitAccuracy(u.n);
+          var answered = P.unitAttempts(u.n);
+          var mastery = P.unitMasteryPct(u.n);
+          var a = document.createElement('a');
+          a.className = 'unit-card';
+          a.href = 'units/' + u.slug + '.html';
+          a.innerHTML =
+            '<div class="uc-head">' +
+              '<div class="uc-num">' + u.n + '</div>' +
+              '<div style="flex:1;"><div class="uc-title">' + u.title + '</div><div class="uc-weight">Unit ' + u.n + ' · ' + APSYCH.course.unitWeight + ' · ' + u.topics.length + ' topics</div></div>' +
+              Shell.ring(mastery, { size: 62, stroke: 7, fs: '.85rem', aria: mastery + ' percent mastered' }) +
+            '</div>' +
+            '<p class="uc-blurb">' + u.blurb + '</p>' +
+            '<div class="uc-foot"><span class="uc-meta">' + (answered ? answered + ' answered · ' + (acc == null ? '—' : acc + '% accuracy') : 'Not started') + '</span>' +
+            '<span class="chip">Open →</span></div>';
+          host.appendChild(a);
+        });
+      }
+
+      // continue button
+      document.getElementById('continue-btn').addEventListener('click', function () {
+        var t = P.lastTopic(), u = P.lastUnit();
+        if (t) { var m = APSYCH.topicMeta(t); location.href = 'units/unit-' + (m ? m.unit : (u || 1)) + '.html#' + t; }
+        else if (u) { location.href = 'units/unit-' + u + '.html'; }
+        else { location.href = 'units/unit-1.html'; }
+      });
+
+      renderStats();
+      window.addEventListener('apsych:progress-updated', renderStats);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AAQ Practice · AP Psychology</title>
+  <script>
+    (function () { try { var t = localStorage.getItem('apsych:theme'); if (!t) { t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; } document.documentElement.setAttribute('data-theme', t); document.documentElement.style.colorScheme = t; } catch (e) {} })();
+  </script>
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body data-root="../">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" aria-label="Course navigation"></aside>
+    <div class="drawer-scrim" aria-hidden="true"></div>
+    <div class="main">
+      <header class="topbar">
+        <button class="hamburger" aria-label="Open navigation menu" aria-expanded="false">☰</button>
+        <div class="crumb"><a href="../index.html">Home</a> / <b>AAQ Practice</b></div>
+        <div class="topbar-spacer"></div>
+        <div class="stat-strip" id="stat-strip"></div>
+        <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode">🌙</button>
+      </header>
+      <main class="content" id="main">
+        <div class="page-head"><div class="eyebrow">Free response · Question 1</div><h1>Article Analysis Question (AAQ)</h1>
+          <p class="lede">You'll read one summarized peer-reviewed study and answer six parts (A–F) for 7 points in ~25 minutes. Two original, exam-style sets are below. Write your response, then reveal the rubric and model answer to self-score.</p>
+        </div>
+        <div class="callout info reading" style="max-width:none;">
+          <div class="c-title"><span aria-hidden="true">🧭</span> How to approach it</div>
+          <ul class="mb-0">
+            <li><b>A</b> — name the research method (experiment, correlational, case study, meta-analysis, etc.).</li>
+            <li><b>B</b> — give an <em>operational</em> definition: how a variable was actually measured.</li>
+            <li><b>C</b> — interpret a specific statistic in the context of the study.</li>
+            <li><b>D</b> — name an ethical guideline the researchers followed (informed consent, debriefing, confidentiality…).</li>
+            <li><b>E</b> — explain generalizability using the actual participant sample.</li>
+            <li><b>F</b> — use a specific result to explain support for/against the hypothesis (worth 2).</li>
+          </ul>
+        </div>
+        <div id="frq-list" class="stack"></div>
+      </main>
+      <footer data-footer></footer>
+    </div>
+  </div>
+
+  <script src="../data/course.js"></script>
+  <script src="../data/frq.js"></script>
+  <script src="../js/progress.js"></script>
+  <script src="../js/gamification.js"></script>
+  <script src="../js/quiz.js"></script>
+  <script src="../js/notes.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/export.js"></script>
+  <script>
+    (function () {
+      Shell.init({ active: { page: 'aaq' } });
+      var host = document.getElementById('frq-list');
+      (APSYCH.frq.aaq || []).forEach(function (frq, i) {
+        var card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = '<div class="eyebrow">Set ' + (i + 1) + '</div>' + APSYCH.Notes.renderFRQ(frq);
+        host.appendChild(card);
+      });
+      APSYCH.Notes.restoreFRQ();
+    })();
+  </script>
+</body>
+</html>

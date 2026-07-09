@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Assessment — Unit 3 · AP Psychology</title>
+  <script>
+    (function () { try { var t = localStorage.getItem('apsych:theme'); if (!t) { t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; } document.documentElement.setAttribute('data-theme', t); document.documentElement.style.colorScheme = t; } catch (e) {} })();
+  </script>
+  <link rel="stylesheet" href="../css/themes.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body data-root="../" data-unit="3">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" aria-label="Course navigation"></aside>
+    <div class="drawer-scrim" aria-hidden="true"></div>
+    <div class="main">
+      <header class="topbar">
+        <button class="hamburger" aria-label="Open navigation menu" aria-expanded="false">☰</button>
+        <div class="crumb"><a href="../index.html">Home</a> / <b id="crumb-unit">Assessment</b></div>
+        <div class="topbar-spacer"></div>
+        <div class="stat-strip" id="stat-strip"></div>
+        <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode">🌙</button>
+      </header>
+
+      <div class="exam-bar hidden" id="exam-bar">
+        <div class="flex items-center gap-4">
+          <span class="timer" id="timer" aria-live="off">--:--</span>
+          <span class="muted small" id="answered-count">0 answered</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="btn btn-sm btn-ghost" id="palette-toggle" aria-expanded="false">Question navigator</button>
+          <button class="btn btn-sm btn-primary" id="finish-early">Finish</button>
+        </div>
+      </div>
+      <div class="panel hidden" id="palette-wrap" style="border-radius:0;border-left:0;border-right:0;"><div class="q-palette" id="palette"></div></div>
+
+      <main class="content" id="main">
+        <div id="intro"></div>
+        <div id="quiz-root" class="hidden"></div>
+        <div id="results" class="hidden"></div>
+      </main>
+      <footer data-footer></footer>
+    </div>
+  </div>
+
+  <script src="../data/course.js"></script>
+  <script src="../data/questions/unit-3.js"></script>
+  <script src="../data/frq.js"></script>
+  <script src="../js/progress.js"></script>
+  <script src="../js/gamification.js"></script>
+  <script src="../js/quiz.js"></script>
+  <script src="../js/notes.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/export.js"></script>
+  <script>
+    (function () {
+      var N = Number(document.body.dataset.unit);
+      var u = APSYCH.unitByNumber(N);
+      var TARGET = { 1: 15, 2: 25, 3: 20, 4: 10, 5: 30 };
+      document.getElementById('crumb-unit').textContent = 'Assessment · Unit ' + N;
+      document.title = 'Assessment — Unit ' + N + ' · AP Psychology';
+      Shell.init({ active: { page: 'assessment', unit: N } });
+
+      var avail = Quiz.unitQuestions(N);
+      var count = Math.min(TARGET[N] || 15, avail.length);
+      var minutes = Math.max(8, Math.round(count * 1.1));
+
+      function frqForUnit(n) {
+        var aaq = (APSYCH.frq.aaq || []), ebq = (APSYCH.frq.ebq || []);
+        if (n % 2 === 1) return aaq[Math.floor((n - 1) / 2) % Math.max(1, aaq.length)] || ebq[0];
+        return ebq[Math.floor((n - 2) / 2) % Math.max(1, ebq.length)] || aaq[0];
+      }
+      var frq = frqForUnit(N);
+
+      document.getElementById('intro').innerHTML =
+        '<div class="page-head"><div class="eyebrow">Unit ' + N + ' Assessment</div><h1>' + u.title + ' — exam simulation</h1>' +
+        '<p class="lede">A timed, exam-style checkpoint. Unlike practice mode, <b>feedback is held until the end</b> — you\'ll get a full results breakdown by topic and by science practice.</p></div>' +
+        '<div class="card"><div class="stat-row" style="grid-template-columns:repeat(3,1fr);">' +
+        '<div class="stat-tile"><div class="num">' + count + '</div><div class="lbl">Multiple choice</div></div>' +
+        '<div class="stat-tile"><div class="num">' + minutes + '</div><div class="lbl">Minutes</div></div>' +
+        '<div class="stat-tile"><div class="num">1</div><div class="lbl">Free response</div></div>' +
+        '</div><ul class="mt-4"><li>Questions span all ' + u.topics.length + ' topics in the unit.</li>' +
+        '<li>You can flag/eliminate answers and jump around with the question navigator.</li>' +
+        '<li>The free-response task at the end is <b>self-scored</b> against an official-style rubric with a model answer.</li></ul>' +
+        '<div class="flex gap-3 wrap mt-4"><button class="btn btn-primary" id="begin">Begin assessment →</button>' +
+        '<a class="btn btn-outline" href="../practice/' + u.slug + '.html">Prefer untimed practice?</a></div></div>';
+
+      var session = null;
+
+      document.getElementById('intro').addEventListener('click', function (e) {
+        if (!e.target.closest('#begin')) return;
+        startExam();
+      });
+
+      function fmt(s) { var m = Math.floor(s / 60), ss = s % 60; return m + ':' + String(ss).padStart(2, '0'); }
+
+      function startExam() {
+        var qs = Quiz.shuffle(avail).slice(0, count);
+        document.getElementById('intro').classList.add('hidden');
+        document.getElementById('quiz-root').classList.remove('hidden');
+        document.getElementById('exam-bar').classList.remove('hidden');
+
+        session = new Quiz.ExamSession('#quiz-root', qs, {
+          minutes: minutes, shuffle: false,
+          onTick: function (rem) {
+            var t = document.getElementById('timer');
+            t.textContent = fmt(rem);
+            t.classList.toggle('low', rem <= 60);
+          },
+          onChange: function (st) {
+            document.getElementById('answered-count').textContent = st.answered + ' of ' + st.total + ' answered';
+            buildPalette(st);
+          },
+          onFinish: showResults
+        });
+        buildPalette({ index: 0, total: qs.length, answered: 0, answeredMap: {} });
+      }
+
+      function buildPalette(st) {
+        var host = document.getElementById('palette');
+        host.innerHTML = '';
+        for (var k = 0; k < st.total; k++) {
+          (function (k) {
+            var b = document.createElement('button');
+            b.textContent = k + 1;
+            if (st.answeredMap && st.answeredMap[k] != null) b.classList.add('answered');
+            if (k === st.index) b.classList.add('current');
+            b.setAttribute('aria-label', 'Go to question ' + (k + 1) + (st.answeredMap && st.answeredMap[k] != null ? ', answered' : ''));
+            b.addEventListener('click', function () { if (session) session.goto(k); });
+            host.appendChild(b);
+          })(k);
+        }
+      }
+
+      document.getElementById('palette-toggle').addEventListener('click', function () {
+        var w = document.getElementById('palette-wrap');
+        var open = !w.classList.contains('hidden');
+        w.classList.toggle('hidden', open);
+        this.setAttribute('aria-expanded', String(!open));
+      });
+      document.getElementById('finish-early').addEventListener('click', function () { if (session) session.confirmFinish(); });
+
+      function bar(label, c, n) {
+        var pct = n ? Math.round(c / n * 100) : 0;
+        return '<div class="bar-row"><span>' + label + '</span><span class="bar"><i style="width:' + pct + '%"></i></span><span class="val">' + c + '/' + n + ' · ' + pct + '%</span></div>';
+      }
+
+      function showResults(result) {
+        document.getElementById('exam-bar').classList.add('hidden');
+        document.getElementById('palette-wrap').classList.add('hidden');
+        document.getElementById('quiz-root').classList.add('hidden');
+        var pct = result.total ? Math.round(result.correct / result.total * 100) : 0;
+
+        var topicBars = u.topics.filter(function (t) { return result.byTopic[t.code]; }).map(function (t) {
+          var r = result.byTopic[t.code]; return bar(t.code + ' ' + t.title, r.c, r.n);
+        }).join('');
+        var pracBars = Object.keys(result.byPractice).sort().map(function (p) {
+          var r = result.byPractice[p]; var name = APSYCH.course.practices[Number(p.slice(1)) - 1];
+          return bar('Practice ' + p.slice(1) + ' · ' + (name ? name.name : ''), r.c, r.n);
+        }).join('');
+
+        var missedHTML = result.missed.length
+          ? result.missed.map(function (m) { return Quiz.reviewCardHTML(m.q, m.chosen); }).join('')
+          : '<p class="muted">You didn\'t miss any multiple-choice questions. 🎉</p>';
+
+        var html = '<div class="page-head"><div class="eyebrow">Results · Unit ' + N + ' Assessment</div><h1>Assessment complete</h1></div>';
+        html += '<div class="card"><div class="result-summary"><div class="center"><div class="score-big">' + pct + '%</div>' +
+          '<div class="muted">' + result.correct + ' of ' + result.total + ' correct</div></div>' +
+          '<div><h3>Accuracy by topic</h3>' + (topicBars || '<p class="muted small">No topic data.</p>') +
+          '<h3 class="mt-4">Accuracy by science practice</h3>' + (pracBars || '') + '</div></div></div>';
+
+        html += '<h2 class="mt-6">Free response (self-scored)</h2>';
+        html += '<div class="card">' + (frq ? APSYCH.Notes.renderFRQ(frq) : '<p class="muted">FRQ practice is on the dedicated AAQ/EBQ pages.</p>') + '</div>';
+
+        html += '<h2 class="mt-6">Review the questions you missed</h2><div class="stack">' + missedHTML + '</div>';
+
+        html += '<div class="flex gap-3 wrap mt-6"><button class="btn btn-primary" id="retake">Retake assessment</button>' +
+          '<a class="btn btn-outline" href="../units/' + u.slug + '.html">Back to unit notes</a>' +
+          '<a class="btn btn-ghost" href="../progress.html">View progress →</a></div>';
+
+        var res = document.getElementById('results');
+        res.classList.remove('hidden');
+        res.innerHTML = html;
+        res.querySelector('#retake').addEventListener('click', function () {
+          res.classList.add('hidden'); res.innerHTML = '';
+          document.getElementById('intro').classList.remove('hidden');
+          window.scrollTo({ top: 0 });
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    })();
+  </script>
+</body>
+</html>

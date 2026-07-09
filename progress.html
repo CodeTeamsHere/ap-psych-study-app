@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Progress &amp; Mastery · AP Psychology</title>
+  <script>
+    (function () { try { var t = localStorage.getItem('apsych:theme'); if (!t) { t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; } document.documentElement.setAttribute('data-theme', t); document.documentElement.style.colorScheme = t; } catch (e) {} })();
+  </script>
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-root="./">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" aria-label="Course navigation"></aside>
+    <div class="drawer-scrim" aria-hidden="true"></div>
+    <div class="main">
+      <header class="topbar">
+        <button class="hamburger" aria-label="Open navigation menu" aria-expanded="false">☰</button>
+        <div class="crumb"><a href="index.html">Home</a> / <b>Progress</b></div>
+        <div class="topbar-spacer"></div>
+        <div class="stat-strip" id="stat-strip"></div>
+        <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode">🌙</button>
+      </header>
+      <main class="content" id="main">
+        <div class="page-head"><div class="eyebrow">Your progress</div><h1>Progress &amp; Mastery</h1>
+          <p class="lede">Everything here is computed from your practice history, stored only in this browser. Back it up with Export.</p></div>
+
+        <section class="card mb-4">
+          <div class="spread wrap gap-4">
+            <div class="flex items-center gap-4"><div id="course-ring"></div>
+              <div><h2 style="margin-bottom:.25rem;">Course mastery</h2>
+                <p class="muted mb-0 small" id="course-sub"></p></div></div>
+            <div class="stat-row" style="min-width:260px;">
+              <div class="stat-tile"><div class="num" id="s-answered">0</div><div class="lbl">Answered</div></div>
+              <div class="stat-tile"><div class="num" id="s-acc">—</div><div class="lbl">Accuracy</div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mb-6">
+          <h2>Topic mastery map</h2>
+          <p class="muted small">All 35 topics. Color shows your mastery level; click any square to jump to that topic's notes.</p>
+          <div id="grid"></div>
+        </section>
+
+        <section class="mb-6">
+          <h2>How mastery levels work</h2>
+          <div class="grid grid-cards">
+            <div class="panel"><span class="badge-level"><span class="mastery-dot m-new"></span> New</span><p class="muted small mt-2 mb-0">Not attempted yet.</p></div>
+            <div class="panel"><span class="badge-level"><span class="mastery-dot m-practiced"></span> Practiced</span><p class="muted small mt-2 mb-0">Attempted, but not yet 70% rolling accuracy (or too few questions).</p></div>
+            <div class="panel"><span class="badge-level"><span class="mastery-dot m-familiar"></span> Familiar</span><p class="muted small mt-2 mb-0">≈70–85% rolling accuracy.</p></div>
+            <div class="panel"><span class="badge-level"><span class="mastery-dot m-proficient"></span> Proficient</span><p class="muted small mt-2 mb-0">≈80%+ sustained over 5+ recent questions.</p></div>
+            <div class="panel"><span class="badge-level"><span class="mastery-dot m-mastered"></span> Mastered</span><p class="muted small mt-2 mb-0">≈90%+ sustained over 8+ recent questions. Accuracy can drop you back down, so it stays honest.</p></div>
+          </div>
+        </section>
+
+        <section class="mb-6">
+          <h2>By unit</h2>
+          <div class="grid grid-cards" id="unit-breakdown"></div>
+        </section>
+
+        <section class="mb-6">
+          <h2>Streak</h2>
+          <div class="card"><div class="flex items-center gap-4 wrap">
+            <div class="stat-tile"><div class="num tabular" id="streak-count">0</div><div class="lbl">Day streak</div></div>
+            <div class="stat-tile"><div class="num tabular" id="freeze-count">0</div><div class="lbl">Streak freezes</div></div>
+            <p class="muted small" style="flex:1;min-width:220px;">Answer at least one question a day to keep your streak. A <b>streak freeze</b> is spent automatically if you miss a single day, so one busy day won't reset months of work. You earn a freeze every 7-day run (up to 3).</p>
+          </div></div>
+        </section>
+
+        <section class="mb-6">
+          <h2>Badges</h2>
+          <div class="grid grid-cards" id="badges"></div>
+        </section>
+
+        <section class="mb-6">
+          <h2>Back up your progress</h2>
+          <div class="card">
+            <p class="muted">Progress lives only in this browser's storage — it doesn't sync across devices. Export a JSON backup, or import one to move progress to another browser/device.</p>
+            <div class="flex gap-3 wrap">
+              <button class="btn btn-primary" data-export-progress>⬇ Export progress</button>
+              <button class="btn btn-outline" data-import-trigger>⬆ Import progress</button>
+              <input type="file" accept="application/json,.json" data-import-progress class="visually-hidden">
+              <button class="btn btn-ghost" data-reset-progress style="color:var(--incorrect);">Reset all progress</button>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer data-footer></footer>
+    </div>
+  </div>
+
+  <script src="data/course.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/gamification.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/export.js"></script>
+  <script>
+    (function () {
+      Shell.init({ active: { page: 'progress' } });
+      var P = window.Progress;
+
+      function render() {
+        var mastery = P.courseMasteryPct();
+        document.getElementById('course-ring').innerHTML = Shell.ring(mastery, { size: 110, stroke: 12, sub: 'mastered', fs: '1.6rem', aria: mastery + ' percent of topics mastered' });
+        document.getElementById('course-sub').textContent = P.topicsAtOrAbove('Proficient') + ' of 35 topics at Proficient or above · ' + P.topicsAtOrAbove('Mastered') + ' mastered.';
+        var ans = P.totalAnswered(), cor = P.totalCorrect();
+        document.getElementById('s-answered').textContent = ans;
+        document.getElementById('s-acc').textContent = ans ? Math.round(cor / ans * 100) + '%' : '—';
+        Shell.renderMasteryGrid('#grid');
+        document.getElementById('streak-count').textContent = P.streakCount();
+        document.getElementById('freeze-count').textContent = P.freezes();
+
+        var host = document.getElementById('unit-breakdown');
+        host.innerHTML = '';
+        APSYCH.course.units.forEach(function (u) {
+          var acc = P.unitAccuracy(u.n), mast = P.unitMasteryPct(u.n), answered = P.unitAttempts(u.n);
+          var d = document.createElement('div');
+          d.className = 'panel';
+          d.innerHTML = '<div class="spread"><div><b>Unit ' + u.n + '</b><div class="muted small">' + u.title + '</div></div>' +
+            Shell.ring(mast, { size: 56, stroke: 6, fs: '.8rem', aria: mast + ' percent mastered' }) + '</div>' +
+            '<div class="flex gap-3 mt-4"><span class="chip">' + answered + ' answered</span><span class="chip acc">' + (acc == null ? 'New' : acc + '%') + '</span></div>' +
+            '<div class="mt-4"><a class="btn btn-sm btn-outline" href="units/' + u.slug + '.html">Notes</a> <a class="btn btn-sm btn-ghost" href="practice/' + u.slug + '.html">Practice</a></div>';
+          host.appendChild(d);
+        });
+
+        Gamification.renderBadges('#badges');
+      }
+      render();
+      window.addEventListener('apsych:progress-updated', render);
+    })();
+  </script>
+</body>
+</html>

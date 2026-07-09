@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Exam Overview · AP Psychology</title>
+  <script>
+    (function () { try { var t = localStorage.getItem('apsych:theme'); if (!t) { t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; } document.documentElement.setAttribute('data-theme', t); document.documentElement.style.colorScheme = t; } catch (e) {} })();
+  </script>
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-root="./">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app">
+    <aside class="sidebar" aria-label="Course navigation"></aside>
+    <div class="drawer-scrim" aria-hidden="true"></div>
+    <div class="main">
+      <header class="topbar">
+        <button class="hamburger" aria-label="Open navigation menu" aria-expanded="false">☰</button>
+        <div class="crumb"><a href="index.html">Home</a> / <b>Exam Overview</b></div>
+        <div class="topbar-spacer"></div>
+        <div class="stat-strip" id="stat-strip"></div>
+        <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode">🌙</button>
+      </header>
+      <main class="content" id="main">
+        <div class="page-head"><div class="eyebrow">Know the test</div><h1>AP Psychology Exam Overview</h1>
+          <p class="lede">The course was revised effective Fall 2024; the first exam in the new format was given in May 2025. This site follows that current structure: <b>5 units, 35 topics, 4 science practices, and a 75-question multiple-choice section</b>. Ignore any older 9-unit / 100-question outline you may find online.</p>
+        </div>
+
+        <div class="callout info reading" style="max-width:none;">
+          <div class="c-title"><span aria-hidden="true">📅</span> Exam date</div>
+          <p class="mb-0">This site lists the exam as <b id="exam-date-label"></b>. <span id="exam-countdown"></span> College Board sets dates annually — always confirm the current year's date on College Board's site.</p>
+        </div>
+
+        <section>
+          <h2>Section structure</h2>
+          <div class="grid grid-cards">
+            <div class="card">
+              <h3>Section I — Multiple Choice</h3>
+              <ul class="reading" style="max-width:none;">
+                <li><b>75 questions</b>, <b>90 minutes</b></li>
+                <li><b>66.7%</b> of your score</li>
+                <li>Exactly <b>4 answer choices (A–D)</b> each</li>
+                <li>No penalty for guessing — answer every question</li>
+                <li>Assesses Science Practices 1–3 only</li>
+                <li>Expect graphs, tables, and figures</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Section II — Free Response</h3>
+              <ul class="reading" style="max-width:none;">
+                <li><b>2 questions</b>, <b>70 minutes</b> total</li>
+                <li><b>33.3%</b> of your score</li>
+                <li>Q1 — Article Analysis Question (AAQ)</li>
+                <li>Q2 — Evidence-Based Question (EBQ)</li>
+                <li>Assesses Science Practice 4 (Argumentation)</li>
+              </ul>
+            </div>
+          </div>
+          <p class="muted small mt-4">Digital exam delivered in Bluebook. No calculator is provided or needed.</p>
+        </section>
+
+        <section class="mt-6">
+          <h2>The four science practices</h2>
+          <p class="muted">Every multiple-choice question is tagged to one of Practices 1–3. Practice 4 is free-response only.</p>
+          <div id="practices" class="stack"></div>
+          <div class="callout traps reading" style="max-width:none;">
+            <div class="c-title"><span aria-hidden="true">⚠️</span> Don't neglect Practice 3</div>
+            <p class="mb-0">Data Interpretation is only ~10% of the MCQ section, but it's the most under-practiced skill in free review resources. This site includes genuine graph/table/statistics questions — do them.</p>
+          </div>
+        </section>
+
+        <section class="mt-6">
+          <h2>Free-response formats</h2>
+
+          <div class="card mb-4">
+            <h3>Q1 — Article Analysis Question (AAQ)</h3>
+            <p class="muted">One summarized peer-reviewed study. <b>25 minutes</b> (includes ~10 min reading). <b>7 points</b> across 6 parts:</p>
+            <table class="rubric-table">
+              <thead><tr><th>Part</th><th>Pts</th><th>Task</th></tr></thead>
+              <tbody>
+                <tr><td>A</td><td>1</td><td>Identify the research method used.</td></tr>
+                <tr><td>B</td><td>1</td><td>State an operational (measurable) definition of a variable.</td></tr>
+                <tr><td>C</td><td>1</td><td>Interpret a reported statistic in context.</td></tr>
+                <tr><td>D</td><td>1</td><td>Identify an ethical guideline the researchers applied.</td></tr>
+                <tr><td>E</td><td>1</td><td>Explain the extent to which findings generalize, using participant evidence.</td></tr>
+                <tr><td>F</td><td>2</td><td>Explain how a specific result supports or refutes the hypothesis.</td></tr>
+              </tbody>
+            </table>
+            <a class="btn btn-primary mt-4" href="frq/aaq-practice.html">Practice the AAQ →</a>
+          </div>
+
+          <div class="card">
+            <h3>Q2 — Evidence-Based Question (EBQ)</h3>
+            <p class="muted">Three summarized peer-reviewed sources on one topic. <b>45 minutes</b> (includes ~15 min reading). <b>7 points</b> across 3 parts:</p>
+            <table class="rubric-table">
+              <thead><tr><th>Part</th><th>Pts</th><th>Task</th></tr></thead>
+              <tbody>
+                <tr><td>A</td><td>1</td><td>Propose a defensible claim.</td></tr>
+                <tr><td>B</td><td>1 + 2</td><td>Cite specific evidence from one source (1) and explain/apply a psychological concept (2).</td></tr>
+                <tr><td>C</td><td>1 + 2</td><td>Cite different evidence from a <em>different</em> source (1) and apply a <em>different</em> psychological concept (2).</td></tr>
+              </tbody>
+            </table>
+            <p class="muted small mt-2">Cite sources parenthetically — "(Source A)" — or in-line: "According to Source A…". The applied concept must be one explicitly in the AP Psychology CED. The CED and scoring guidelines were updated in October 2025 (clarifications to AAQ Part D and the EBQ).</p>
+            <a class="btn btn-primary mt-2" href="frq/ebq-practice.html">Practice the EBQ →</a>
+          </div>
+        </section>
+
+        <section class="mt-6">
+          <h2>Scoring context</h2>
+          <div class="callout reading" style="max-width:none;">
+            <div class="c-title"><span aria-hidden="true">ℹ️</span> Unofficial / informational only</div>
+            <p>College Board does <b>not</b> publish the raw-score-to-1–5 conversion. For context only: the first new-format administration (May 2025) had a reported mean of about <b>3.20</b>, with a distribution roughly:</p>
+            <div id="score-dist"></div>
+            <p class="muted small mb-0">That's about 70.5% of students scoring 3 or higher. Treat these as informational, not an official conversion, and never as a promise about your own score.</p>
+          </div>
+        </section>
+
+        <section class="mt-6 mb-6">
+          <h2>A simple summer study plan</h2>
+          <ol class="reading" style="max-width:none;">
+            <li><b>Read the notes for a topic</b> — focus on the plain-language explanation and the trouble-spot callouts.</li>
+            <li><b>Do that topic's practice set</b> until its accuracy chip is green (Familiar+). Read every explanation, even when you're right.</li>
+            <li><b>Weight your time</b> toward Unit 2 (Cognition) and Unit 5 (Mental &amp; Physical Health) — they're dense and high-yield.</li>
+            <li><b>Every few topics, take a unit assessment</b> to simulate timing and deferred feedback.</li>
+            <li><b>Weekly, do one AAQ and one EBQ</b> and self-score against the rubric.</li>
+            <li><b>Use "Review my missed questions"</b> to close gaps instead of re-doing what you already know.</li>
+          </ol>
+          <a class="btn btn-primary" href="how-to-study.html">Study techniques &amp; mnemonics →</a>
+        </section>
+      </main>
+      <footer data-footer></footer>
+    </div>
+  </div>
+
+  <script src="data/course.js"></script>
+  <script src="js/progress.js"></script>
+  <script src="js/gamification.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/export.js"></script>
+  <script>
+    (function () {
+      Shell.init({ active: { page: 'overview' } });
+      document.getElementById('exam-date-label').textContent = APSYCH.course.examDateLabel;
+      var d = Shell.daysUntilExam();
+      document.getElementById('exam-countdown').innerHTML = (d != null && d > 0)
+        ? "That's <b>" + d + " days</b> away."
+        : "That date has already passed — <b>confirm next year's date</b>.";
+
+      var host = document.getElementById('practices');
+      APSYCH.course.practices.forEach(function (p) {
+        var card = document.createElement('div');
+        card.className = 'panel';
+        card.innerHTML = '<div class="spread wrap gap-3"><div style="flex:1;min-width:220px;"><b>Practice ' + p.n + ' — ' + p.name + '</b><p class="muted small mb-0 mt-2">' + p.desc + '</p></div>' +
+          '<div class="center"><div class="num tabular" style="font-size:1.5rem;font-weight:800;color:var(--primary-strong);">' + p.pct + '</div><div class="lbl muted small">' + p.items + '</div></div></div>';
+        host.appendChild(card);
+      });
+
+      var dist = [{ s: 5, p: 15 }, { s: 4, p: 32 }, { s: 3, p: 25 }, { s: 2, p: 19 }, { s: 1, p: 9 }];
+      document.getElementById('score-dist').innerHTML = dist.map(function (r) {
+        return '<div class="bar-row"><span>Score ' + r.s + '</span><span class="bar"><i style="width:' + (r.p / 32 * 100) + '%"></i></span><span class="val">~' + r.p + '%</span></div>';
+      }).join('');
+    })();
+  </script>
+</body>
+</html>
