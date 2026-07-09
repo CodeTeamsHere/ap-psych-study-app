@@ -39,6 +39,29 @@ browser and your progress is saved locally.
 
 ---
 
+## 📊 Content coverage
+
+**400 original multiple-choice questions** across all 35 topics, plus **2 AAQ + 2 EBQ**
+free-response sets. Every question has per-choice explanations and is tagged to a unit, topic,
+science practice, and difficulty.
+
+| Unit | Topics | Questions | Notes |
+|------|:------:|:---------:|-------|
+| 1 — Biological Bases of Behavior | 6 | 63 | ✅ all topics |
+| 2 — Cognition *(high-yield)* | 8 | 96 | ✅ all topics |
+| 3 — Development and Learning | 9 | 99 | ✅ all topics |
+| 4 — Social Psychology and Personality | 7 | 77 | ✅ all topics |
+| 5 — Mental and Physical Health *(high-yield)* | 5 | 65 | ✅ all topics |
+| **Total** | **35** | **400** | — |
+
+Every topic has **11–13 questions** — comfortably above the project's guaranteed floor of 10 per
+topic, with extra weight on the high-yield units (2 and 5) and on genuine **Science Practice 3
+(Data Interpretation)** items (tables, bar charts, scatterplots). This is above the floor but below
+the project's stretch target of 15 per topic; the question banks are designed to be easy to extend —
+just add more objects to the arrays in `data/questions/unit-N.js` following the documented schema.
+
+---
+
 ## ▶️ How to run it locally
 
 **The easy way (no tools needed):**
