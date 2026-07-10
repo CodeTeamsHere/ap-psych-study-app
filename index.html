@@ -44,6 +44,7 @@
               <button class="btn" id="continue-btn">▶ Continue where you left off</button>
               <a class="btn" href="how-to-study.html">How to study →</a>
             </div>
+            <p class="small" id="restore-hint" style="margin:0;display:none;color:color-mix(in srgb, var(--on-primary) 85%, transparent);">First time on this device but studied before elsewhere? <a href="progress.html" style="color:#fff;text-decoration:underline;font-weight:600;">Import your backup →</a></p>
           </div>
           <aside class="hero-aside">
             <div class="stat-tile">
@@ -117,6 +118,7 @@
 
       function renderStats() {
         document.getElementById('stat-answered').textContent = P.totalAnswered();
+        document.getElementById('restore-hint').style.display = P.totalAnswered() === 0 ? 'block' : 'none';
         var ans = P.totalAnswered(), cor = P.totalCorrect();
         document.getElementById('stat-accuracy').textContent = ans ? Math.round(cor / ans * 100) + '%' : '—';
         document.getElementById('course-ring').innerHTML = Shell.ring(P.courseMasteryPct(), { size: 104, stroke: 11, sub: 'mastered', fs: '1.5rem', aria: P.courseMasteryPct() + ' percent of topics mastered' });

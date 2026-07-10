@@ -174,6 +174,20 @@
     document.head.appendChild(link);
   }
 
+  function showStorageWarning() {
+    if (document.querySelector(".storage-warn")) return;
+    var bar = document.createElement("div");
+    bar.className = "storage-warn";
+    bar.setAttribute("role", "alert");
+    bar.innerHTML = '<span><b>⚠️ Your progress won\'t be saved.</b> This browser is blocking local storage — usually because you\'re in a Private / Incognito window. Switch to a normal window to keep your streak, XP, and mastery between visits.</span>' +
+      '<button class="sw-close" aria-label="Dismiss this warning">✕</button>';
+    document.body.appendChild(bar);
+    bar.querySelector(".sw-close").addEventListener("click", function () { bar.remove(); });
+  }
+  function maybeStorageWarning() {
+    if (window.Progress && !window.Progress.storageOk()) showStorageWarning();
+  }
+
   var Shell = {
     init: function (opts) {
       opts = opts || {};
@@ -183,6 +197,8 @@
       if (window.Gamification) window.Gamification.renderStrip("#stat-strip");
       wireDrawer();
       buildFooter();
+      maybeStorageWarning();
+      window.addEventListener("apsych:storage-blocked", showStorageWarning);
       window.addEventListener("apsych:progress-updated", updateProgressUI);
     },
     refresh: updateProgressUI

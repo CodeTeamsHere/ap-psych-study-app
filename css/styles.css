@@ -594,6 +594,27 @@ details.reveal > .reveal-body { padding: var(--sp-4) var(--sp-2); }
 .modal { background: var(--surface); border-radius: var(--radius-lg); padding: var(--sp-6); max-width: 480px; width: 100%; box-shadow: var(--shadow-lg); }
 .modal h2 { margin-top: 0; }
 
+/* ============================================================= STORAGE WARNING */
+.storage-warn {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 400;
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--warn-bg); color: var(--text);
+  border-top: 2px solid var(--warn); box-shadow: var(--shadow-lg);
+  font-size: var(--fs-sm); line-height: 1.45;
+}
+.storage-warn .sw-close {
+  flex: none; margin-left: auto; width: 34px; height: 34px; border-radius: 8px;
+  border: 1px solid var(--border-strong); background: transparent; color: var(--text);
+  cursor: pointer; font-size: 0.9rem;
+}
+.storage-warn .sw-close:hover { background: var(--surface-3); }
+
+/* auto-save status line */
+.save-status { display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-sm); font-weight: 600; }
+.save-status .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--correct); flex: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--correct) 22%, transparent); }
+.save-status.off .dot { background: var(--incorrect); box-shadow: 0 0 0 3px color-mix(in srgb, var(--incorrect) 22%, transparent); }
+
 /* ============================================================= FOOTER */
 .site-footer {
   border-top: 1px solid var(--border); margin-top: var(--sp-7);

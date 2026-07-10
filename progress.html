@@ -76,9 +76,10 @@
         </section>
 
         <section class="mb-6">
-          <h2>Back up your progress</h2>
+          <h2>Saving &amp; backup</h2>
           <div class="card">
-            <p class="muted">Progress lives only in this browser's storage — it doesn't sync across devices. Export a JSON backup, or import one to move progress to another browser/device.</p>
+            <p class="save-status" id="save-status"><span class="dot"></span><span id="save-status-text">Auto-save is on</span></p>
+            <p class="muted">Your progress saves <b>automatically</b> to this browser every time you answer a question — close the tab and come back tomorrow and it'll still be here, no sign-in needed. It's stored only in <em>this</em> browser, though, so to move it to another browser, phone, or computer, export a backup file here and import it there.</p>
             <div class="flex gap-3 wrap">
               <button class="btn btn-primary" data-export-progress>⬇ Export progress</button>
               <button class="btn btn-outline" data-import-trigger>⬆ Import progress</button>
@@ -103,6 +104,16 @@
       Shell.init({ active: { page: 'progress' } });
       var P = window.Progress;
 
+      function timeAgo(ts) {
+        var s = Math.floor((Date.now() - ts) / 1000);
+        if (s < 45) return 'just now';
+        if (s < 90) return 'a minute ago';
+        var m = Math.floor(s / 60); if (m < 60) return m + ' minutes ago';
+        var h = Math.floor(m / 60); if (h < 24) return h + (h === 1 ? ' hour ago' : ' hours ago');
+        var d = Math.floor(h / 24); if (d < 30) return d + (d === 1 ? ' day ago' : ' days ago');
+        return new Date(ts).toLocaleDateString();
+      }
+
       function render() {
         var mastery = P.courseMasteryPct();
         document.getElementById('course-ring').innerHTML = Shell.ring(mastery, { size: 110, stroke: 12, sub: 'mastered', fs: '1.6rem', aria: mastery + ' percent of topics mastered' });
@@ -113,6 +124,17 @@
         Shell.renderMasteryGrid('#grid');
         document.getElementById('streak-count').textContent = P.streakCount();
         document.getElementById('freeze-count').textContent = P.freezes();
+
+        // auto-save status
+        var ss = document.getElementById('save-status'), sst = document.getElementById('save-status-text');
+        if (P.storageOk()) {
+          ss.classList.remove('off');
+          var t = P.lastUpdated();
+          sst.textContent = 'Auto-save is on' + (t ? ' — last saved ' + timeAgo(t) : ' — nothing saved yet');
+        } else {
+          ss.classList.add('off');
+          sst.textContent = 'Storage is blocked — progress will NOT be saved. Are you in a Private / Incognito window?';
+        }
 
         var host = document.getElementById('unit-breakdown');
         host.innerHTML = '';

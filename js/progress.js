@@ -44,6 +44,18 @@
   }
 
   var state = fresh();
+  var storageOk = true;
+
+  function probeStorage() {
+    try {
+      localStorage.setItem(KEY + ":_probe", "1");
+      localStorage.removeItem(KEY + ":_probe");
+      storageOk = true;
+    } catch (e) {
+      storageOk = false; // private mode, disabled storage, or full
+    }
+    return storageOk;
+  }
 
   function load() {
     try {
@@ -64,8 +76,11 @@
     state.updatedAt = Date.now();
     try {
       localStorage.setItem(KEY, JSON.stringify(state));
+      storageOk = true;
     } catch (e) {
+      storageOk = false;
       console.warn("Progress: save failed (storage full or blocked).", e);
+      try { window.dispatchEvent(new CustomEvent("apsych:storage-blocked")); } catch (_) {}
     }
     try {
       window.dispatchEvent(new CustomEvent("apsych:progress-updated"));
@@ -148,6 +163,8 @@
     levelClass: levelClass,
 
     raw: function () { return state; },
+    storageOk: function () { return storageOk; },
+    lastUpdated: function () { return state.updatedAt; },
 
     recordAttempt: function (q, isCorrect) {
       isCorrect = !!isCorrect;
@@ -304,6 +321,18 @@
   };
 
   load();
+  probeStorage();
+
+  // Cross-tab sync: if progress changes in another tab/window, reload and refresh UI.
+  try {
+    window.addEventListener("storage", function (e) {
+      if (e.key === KEY) {
+        load();
+        try { window.dispatchEvent(new CustomEvent("apsych:progress-updated")); } catch (_) {}
+      }
+    });
+  } catch (e) {}
+
   window.Progress = API;
   window.APSYCH = window.APSYCH || {};
   window.APSYCH.Progress = API;
