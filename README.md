@@ -1,10 +1,11 @@
 # AP Psychology Self-Study Studio
 
-A free, **100% static** study website for **AP® Psychology** — built for a single self-studying
+A free, **static-first** study website for **AP® Psychology** — built for a single self-studying
 learner. Original study notes, hundreds of original practice questions with full per-answer
 explanations, mastery tracking, timed exam simulations, and free-response (AAQ + EBQ) practice
-with rubrics and model answers. No accounts, no backend, no tracking — everything runs in your
-browser and your progress is saved locally.
+with rubrics and model answers. **No account required** — everything runs in your browser and your
+progress is saved locally. Optionally, you can **sign in with Google** to sync your progress across
+your devices (the only feature that talks to a server; everything else is fully static and offline-capable).
 
 > Built against the **current** College Board course: **5 units, 35 topics, 4 science practices,
 > and a 75-question** multiple-choice section (effective Fall 2024; first exam May 2025).
@@ -36,6 +37,9 @@ browser and your progress is saved locally.
 - **Dark mode** (respects your system preference, with a manual toggle), fully **keyboard
   accessible**, screen-reader friendly, and mobile-responsive.
 - **Export / import** your progress as a JSON file (since it lives only in your browser).
+- **Optional cross-device sync** — sign in with Google (via Firebase) to carry your progress across
+  phone, tablet, and computers automatically. Completely optional; signing in *merges* with your
+  on-device progress so nothing is lost, and the app works fully without ever signing in.
 
 ---
 
@@ -161,6 +165,8 @@ js/theme.js              Dark-mode toggle + persistence
 js/nav.js                Sidebar, mobile drawer, keyboard, progress rings, mastery grid
 js/notes.js              Study-notes renderer + FRQ renderer
 js/export.js             Export / import / reset progress
+js/sync.js               Optional Google sign-in + Firestore cross-device sync (lazy-loaded)
+firestore.rules          Firestore security rules (users access only their own progress doc)
 data/course.js           Single source of truth: units, topics, science practices, exam date
 data/notes/unit-1..5.js  Study-notes content
 data/questions/unit-1..5.js  Original question banks
@@ -177,13 +183,18 @@ This is deliberate — it lets the site work when you simply **open `index.html`
 
 ## 🧠 How progress & mastery work
 
-- Every answer is logged to your browser's `localStorage`. There are **no accounts and no
-  cross-device sync** (the Web Storage spec caps this at ~5 MB per site).
+- Every answer is logged to your browser's `localStorage` **immediately**, and reloaded every time
+  you open the app — so on the same browser it persists across closing the tab, restarting your
+  computer, and days later, with nothing to press.
 - A topic's **accuracy chip** shows your *rolling* accuracy (recent questions). Your **mastery level**
   is computed from that rolling accuracy plus how many questions you've attempted — and it can go
   **down** if your recent accuracy drops, so the signal stays honest.
-- Because progress is local, use **Progress → Export progress** to save a backup JSON file, and
-  **Import progress** to restore it or move it to another browser/device.
+- **Same browser = automatic.** To move progress to a *different* browser/device, either use
+  **Progress → Export/Import** (a JSON file), or **sign in with Google** on the Progress page for
+  automatic cross-device sync.
+- **Cloud sync (optional):** signing in stores your progress in Firebase Firestore under
+  `apsych_progress/{your-uid}`, readable/writable only by you (see `firestore.rules`). Firebase is
+  lazy-loaded only after you opt in, so users who never sign in stay 100% local and offline-capable.
 
 ---
 
