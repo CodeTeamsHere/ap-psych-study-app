@@ -104,6 +104,63 @@
     return "Practiced"; // demotion path: recent accuracy < 70% drops out of Familiar+
   }
 
+  // Deep-ish clone for plain data
+  function clone(o) { return o == null ? o : JSON.parse(JSON.stringify(o)); }
+
+  // Pick the per-question/per-topic record that reflects MORE progress (more attempts; tie -> newer).
+  function pickMore(x, y) {
+    if (!x) return clone(y);
+    if (!y) return clone(x);
+    var ax = x.attempts || 0, ay = y.attempts || 0;
+    if (ay > ax) return clone(y);
+    if (ax > ay) return clone(x);
+    return (y.ts || 0) > (x.ts || 0) ? clone(y) : clone(x);
+  }
+
+  // Merge two progress states without losing work (used when signing in / pulling from cloud).
+  function mergeTwo(a, b) {
+    a = a || fresh(); b = b || fresh();
+    var out = fresh();
+    var keys, k;
+
+    out.questions = {};
+    keys = {}; Object.keys(a.questions || {}).forEach(function (k) { keys[k] = 1; });
+    Object.keys(b.questions || {}).forEach(function (k) { keys[k] = 1; });
+    for (k in keys) out.questions[k] = pickMore((a.questions || {})[k], (b.questions || {})[k]);
+
+    out.topics = {};
+    keys = {}; Object.keys(a.topics || {}).forEach(function (k) { keys[k] = 1; });
+    Object.keys(b.topics || {}).forEach(function (k) { keys[k] = 1; });
+    for (k in keys) {
+      var t = pickMore((a.topics || {})[k], (b.topics || {})[k]) || { attempts: 0, correct: 0, recent: [] };
+      t.level = computeLevel(t);
+      out.topics[k] = t;
+    }
+
+    out.xp = Math.max(a.xp || 0, b.xp || 0);
+    out.maxCorrectStreak = Math.max(a.maxCorrectStreak || 0, b.maxCorrectStreak || 0);
+    out.correctStreak = 0;
+
+    var sa = a.streak || {}, sb = b.streak || {};
+    var base = String(sb.lastActive || "") > String(sa.lastActive || "") ? sb : sa;
+    out.streak = Object.assign(fresh().streak, base);
+    out.streak.count = Math.max(sa.count || 0, sb.count || 0);
+    out.streak.freezes = Math.max(sa.freezes || 0, sb.freezes || 0);
+
+    out.badges = {};
+    [a.badges || {}, b.badges || {}].forEach(function (bd) {
+      Object.keys(bd).forEach(function (id) { out.badges[id] = out.badges[id] ? Math.min(out.badges[id], bd[id]) : bd[id]; });
+    });
+
+    var newer = (b.updatedAt || 0) >= (a.updatedAt || 0) ? b : a;
+    out.lastTopic = newer.lastTopic || a.lastTopic || b.lastTopic || null;
+    out.lastUnit = newer.lastUnit != null ? newer.lastUnit : (a.lastUnit != null ? a.lastUnit : b.lastUnit);
+    out.sessions = Math.max(a.sessions || 0, b.sessions || 0);
+    out.createdAt = Math.min(a.createdAt || Date.now(), b.createdAt || Date.now());
+    out.updatedAt = Date.now();
+    return out;
+  }
+
   function rollingAccuracy(code) {
     var t = state.topics[code];
     if (!t || !t.recent || !t.recent.length) return null;
@@ -316,6 +373,12 @@
       state = Object.assign(fresh(), obj);
       state.streak = Object.assign(fresh().streak, obj.streak || {});
       save();
+    },
+    // Merge an incoming (e.g. cloud) state into the current one without losing progress.
+    mergeState: function (remote) {
+      state = mergeTwo(state, remote);
+      save();
+      return clone(state);
     },
     reset: function () { state = fresh(); save(); }
   };

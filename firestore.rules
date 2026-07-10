@@ -1,0 +1,17 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // AP Psychology study app: each signed-in user can read/write ONLY their own progress doc.
+    match /apsych_progress/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // ChessSpire: same rule for its progress collection (shared Firebase project).
+    match /chess_progress/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Everything else is denied by default.
+  }
+}

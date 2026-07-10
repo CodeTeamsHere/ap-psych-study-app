@@ -76,6 +76,11 @@
         </section>
 
         <section class="mb-6">
+          <h2>Sync across devices</h2>
+          <div class="card" id="sync-box"><p class="muted mb-0">Loading sync…</p></div>
+        </section>
+
+        <section class="mb-6">
           <h2>Saving &amp; backup</h2>
           <div class="card">
             <p class="save-status" id="save-status"><span class="dot"></span><span id="save-status-text">Auto-save is on</span></p>
@@ -153,6 +158,34 @@
       }
       render();
       window.addEventListener('apsych:progress-updated', render);
+
+      // ---- cloud sync UI ----
+      function renderSync() {
+        var box = document.getElementById('sync-box');
+        if (!box) return;
+        if (!window.Sync) { box.innerHTML = '<p class="muted mb-0">Cloud sync is still loading — if this persists you may be offline.</p>'; return; }
+        if (window.Sync.isSignedIn()) {
+          var u = window.Sync.user() || {};
+          box.innerHTML = '<div class="spread wrap gap-4"><div class="flex items-center gap-3">' +
+            (u.photo ? '<img src="' + u.photo + '" alt="" width="40" height="40" style="border-radius:50%;" referrerpolicy="no-referrer">' : '<span class="emoji" style="font-size:1.6rem;">👤</span>') +
+            '<div><div class="save-status"><span class="dot"></span> Signed in — your progress syncs automatically</div>' +
+            '<div class="muted small">' + (u.email || u.name || '') + '</div></div></div>' +
+            '<button class="btn btn-outline" id="signout-btn">Sign out</button></div>';
+          box.querySelector('#signout-btn').addEventListener('click', function () { window.Sync.signOut(); });
+        } else {
+          box.innerHTML = '<p class="muted">Sign in with Google to carry your streak, XP, and mastery across your phone, tablet, and other computers — automatically, with nothing to export. Your progress on <em>this</em> device is merged in when you sign in, so nothing is lost.</p>' +
+            '<button class="btn btn-primary" id="signin-btn"><span aria-hidden="true">🔑</span> Sign in with Google</button>' +
+            '<p class="muted small mt-2 mb-0">Optional — the app works fully without signing in.</p>';
+          box.querySelector('#signin-btn').addEventListener('click', function () {
+            this.disabled = true; this.textContent = 'Opening Google…';
+            Promise.resolve(window.Sync.signIn()).then(function () { setTimeout(renderSync, 800); });
+          });
+        }
+      }
+      window.addEventListener('apsych:sync-changed', renderSync);
+      window.addEventListener('apsych:progress-updated', render);
+      setTimeout(renderSync, 300); // in case sync.js is still injecting
+      renderSync();
     })();
   </script>
 </body>

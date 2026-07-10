@@ -163,6 +163,16 @@
     });
   }
 
+  function injectSync() {
+    // Load the optional cloud-sync module once, on every page (it stays dormant unless the
+    // user has signed in). Guarded so it isn't added twice.
+    if (window.Sync || document.querySelector("script[data-apsync-sync]")) return;
+    var s = document.createElement("script");
+    s.src = rootPrefix() + "js/sync.js";
+    s.setAttribute("data-apsync-sync", "1");
+    document.head.appendChild(s);
+  }
+
   function injectFavicon() {
     if (document.querySelector('link[rel="icon"]')) return;
     var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>" +
@@ -192,6 +202,7 @@
     init: function (opts) {
       opts = opts || {};
       injectFavicon();
+      injectSync();
       if (window.Progress) window.Progress.load();
       buildSidebar(opts.active || {});
       if (window.Gamification) window.Gamification.renderStrip("#stat-strip");
