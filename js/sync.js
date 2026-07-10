@@ -65,6 +65,7 @@
       if (snap.exists()) {
         var data = snap.data();
         if (data && data.state) window.Progress.mergeState(data.state);
+        if (data && data.extras) applyExtras(data.extras);
       }
       await push(); // ensure cloud holds the merged union
       try { window.dispatchEvent(new CustomEvent("apsych:progress-updated")); } catch (e) {}
@@ -72,9 +73,36 @@
     } catch (e) { console.warn("Sync: pull failed", e); }
   }
 
+  // Written free-response (AAQ/EBQ) drafts live outside the Progress state as
+  // separate localStorage keys, so bundle them into the sync too.
+  function gatherExtras() {
+    var out = {};
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf("apsych:frq:") === 0) out[k] = localStorage.getItem(k);
+      }
+    } catch (e) {}
+    return out;
+  }
+  function applyExtras(extras) {
+    if (!extras) return;
+    try {
+      Object.keys(extras).forEach(function (k) {
+        var remote = extras[k] || "", local = localStorage.getItem(k) || "";
+        if (remote.length > local.length) localStorage.setItem(k, remote); // keep the longer draft
+      });
+      if (window.APSYCH && window.APSYCH.Notes && window.APSYCH.Notes.restoreFRQ) window.APSYCH.Notes.restoreFRQ();
+    } catch (e) {}
+  }
+
   function attachPush() {
     if (pushAttached) return; pushAttached = true;
     window.addEventListener("apsych:progress-updated", schedulePush);
+    // also push shortly after FRQ drafts are typed
+    window.addEventListener("input", function (e) {
+      if (e.target && e.target.matches && e.target.matches("[data-frq-text]")) schedulePush();
+    });
   }
   function schedulePush() {
     if (!user) return;
@@ -87,6 +115,7 @@
       var ref = fb.fsMod.doc(fb.db, COLLECTION, user.uid);
       await fb.fsMod.setDoc(ref, {
         state: window.Progress.exportState(),
+        extras: gatherExtras(),
         email: user.email || null,
         app: "ap-psych",
         updatedAt: Date.now()
